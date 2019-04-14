@@ -21,6 +21,13 @@ if (environment !== 'prod') {
   app.use(logger('dev'));
 }
 
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', process.env.CLIENT_ORIGIN);
+  res.header('Access-Control-Allow-Methods', 'GET, POST');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  next();
+})
+
 app.use('/api/login', (req, res, next) => {
   const { username, password} = req.body;
 
@@ -36,9 +43,6 @@ app.use('/api/login', (req, res, next) => {
   });
 });
 
-app.use('/api/test', (req, res, next) => {
-  res.send('Heyyooooooo!');
-});
 
 app.listen(`${stage.port}`, () => {
   console.log(`Server now listening at localhost:${stage.port}`);

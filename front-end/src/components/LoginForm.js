@@ -1,9 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import Button from './Button';
 import { withRouter } from 'react-router-dom';
-
+import axios from 'axios';
+import AuthService from '../utils/AuthService';
+import { auth } from '../utils/init';
 
 
 const RootContainer = styled.div`
@@ -35,9 +37,12 @@ const Input = styled.input`
   font-size: 20px;
   border-radius: 1px;
   border: none;
-  background-color: #e7eaee91;
   padding: 0.25em 4px;
   min-width: 100px;
+  background-color: #e7eaee91;
+  ${props => props.error && css`
+    background-color: #ffe0e0;`
+  }
 
   :not(:last-child) {
     margin-right: 8px;
@@ -50,14 +55,26 @@ class LoginForm extends React.Component {
     this.state = {
       // TODO: move to redux:
       username: '',
-      password: ''
+      password: '',
+      errorMessage: null,
+      loading: false
     };
     this.handleLogin = this.handleLogin.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
   }
 
   handleLogin() {
-    alert('login!!!')
+    this.setState({ loading: true })
+    auth.login(this.state.username, this.state.password)
+    .then(res => {
+      this.props.history.push('/users');
+    })
+    .catch(err => {
+      this.setState({
+        errorMessage: err.description,
+        loading: false
+      });
+    });
   }
 
   handleInputChange(event) {
@@ -67,6 +84,20 @@ class LoginForm extends React.Component {
     });
   }
 
+  renderErrorMessage() {
+    const ErrorMessage = styled.p`
+      color: red;
+      border-radius: 2px;
+      padding: 4px;
+      margin: 0 0 8px;
+    `
+    if (this.state.errorMessage) {
+      return <ErrorMessage>{this.state.errorMessage}</ErrorMessage>
+    } else {
+      return null;
+    }
+  }
+
   render() {
     return (
       <RootContainer>
@@ -74,18 +105,21 @@ class LoginForm extends React.Component {
         <InputContainer>
           <Input
             name='username'
+            error={!!this.state.errorMessage}
             onChange={this.handleInputChange}
             placeholder='username'
             value={this.state.username}
           />
           <Input
             name='password'
+            error={!!this.state.errorMessage}
             type='password'
             onChange={this.handleInputChange}
             placeholder='password'
             value={this.state.password}
           />
         </InputContainer>
+        {this.renderErrorMessage()}
         <Button
           onClick={this.handleLogin}
           text='Login'
