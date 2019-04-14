@@ -10,6 +10,8 @@ const router = express.Router();
 const environment = process.env.NODE_ENV;
 const stage = require('./config')[environment];
 
+const userController = require('./controllers/users');
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
@@ -18,6 +20,21 @@ app.use(bodyParser.urlencoded({
 if (environment !== 'prod') {
   app.use(logger('dev'));
 }
+
+app.use('/api/login', (req, res, next) => {
+  const { username, password} = req.body;
+
+  userController.login(username, password)
+  .then(response => {
+    res.status(response.status);
+    res.send(response);
+  })
+  .catch(err => {
+    console.log('err =', err);
+    res.status(500);
+    res.send(err);
+  });
+});
 
 app.use('/api/test', (req, res, next) => {
   res.send('Heyyooooooo!');

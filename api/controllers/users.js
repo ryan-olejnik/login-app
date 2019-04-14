@@ -33,5 +33,39 @@ module.exports = {
         })
       })
     })
+  },
+  login: (username, password) => {
+    return new Promise((resolve, reject) => {
+      mongoose.connect(mongoConnUrl, (err) => {
+        if (err) {
+          console.log('error connecting to mongo (500)')
+          resolve({
+            status: 500,
+            description: 'Error connecting to mongo',
+            token: null
+          });
+        }
+  
+        User.findOne({ username, password }, (err, user) => {
+          if (!err && user) {
+            console.log('user found!, user =', user);
+  
+            resolve({
+              status: 200,
+              description: 'Success',
+              token: 'TOKEN'
+            });
+          } else {
+            console.log('user not found!');
+            resolve({
+              status: 401,
+              description: 'Credentials are incorrect',
+              token: null
+            });
+          }
+        });
+      })
+
+    })
   }
 }
