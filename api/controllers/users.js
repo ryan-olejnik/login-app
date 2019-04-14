@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const User = require('../models/User')
-const mongoConnUrl = process.env.MONGO_CONN_URL
+const mongoConnUrl = process.env.MONGO_CONN_URL;
+const { generateToken } = require('../utils/auth');
 
 module.exports = {
   create: (username, password) => {
@@ -34,6 +35,7 @@ module.exports = {
       })
     })
   },
+
   login: (username, password) => {
     return new Promise((resolve, reject) => {
       mongoose.connect(mongoConnUrl, (err) => {
@@ -49,11 +51,13 @@ module.exports = {
         User.findOne({ username, password }, (err, user) => {
           if (!err && user) {
             console.log('user found!, user =', user);
-  
+
+            const token = generateToken({ username });
+            
             resolve({
               status: 200,
               description: 'Success',
-              token: 'TOKEN'
+              token: token
             });
           } else {
             console.log('user not found!');
