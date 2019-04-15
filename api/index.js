@@ -47,8 +47,27 @@ app.use('/api/login', (req, res, next) => {
 });
 
 app.get('/api/users', (req, res) => {
-  // console.log('req = ', req);
-  res.send('users private data!!');
+  const token = req.headers.authorization.split(' ')[1];
+
+  const { verifyToken } = require('./utils/auth');
+
+  const decodedToken = verifyToken(token);
+  console.log('decodedToken =', decodedToken);
+
+  userController.getUserData(token)
+  .then(response => {
+    console.log('response =', response);
+    res.status(response.status);
+    res.send(response);
+  })
+  .catch(err => {
+    res.status(500);
+    res.send({
+      status: 500,
+      description: 'Internal server error',
+      userData: null
+    });
+  })
 })
 
 

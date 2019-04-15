@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const User = require('../models/User')
 const mongoConnUrl = process.env.MONGO_CONN_URL;
-const { generateToken } = require('../utils/auth');
+const { generateToken, verifyToken } = require('../utils/auth');
 
 module.exports = {
   create: (username, password) => {
@@ -71,5 +71,27 @@ module.exports = {
       })
 
     })
+  },
+
+  getUserData: token => {
+    return new Promise((resolve, reject) => {
+      const decodedToken = verifyToken(token);
+      if (decodedToken) {
+        // fetch user data
+
+        resolve({
+          status: 200,
+          description: 'Success',
+          userData: 'this is the user data!'
+        })
+      } else {
+        resolve({
+          status: 401,
+          description: 'Invalid Token',
+          userData: null
+        })
+      }
+
+    });
   }
 }

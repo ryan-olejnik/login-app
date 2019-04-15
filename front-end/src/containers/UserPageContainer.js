@@ -14,10 +14,14 @@ class UserPageContainer extends React.Component {
   componentDidMount() {
     requestsManager.getUserData()
     .then(res => {
-      this.setState({ loading: false, userData: res.data });
+      if (res.status === 200) {
+        this.setState({ loading: false, userData: res.data.userData });
+      } else {
+        throw new Error(res.description);
+      }
     })
     .catch(err => {
-      debugger;
+      this.props.history.push('/');
     });
   }
 
