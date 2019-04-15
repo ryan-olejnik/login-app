@@ -83,7 +83,10 @@ module.exports = {
             resolve({
               status: 200,
               description: 'Success',
-              userData: user.data
+              userData: {
+                username: user.username,
+                data: user.data
+              }
             })
           } else {
             resolve({

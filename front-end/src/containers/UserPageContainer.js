@@ -1,6 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import requestsManager from '../utils/requestsManager';
+import styled from 'styled-components'
+
+const RootContainer = styled.div`
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+`
+
+const UserDataContainer = styled.div`
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+`
 
 class UserPageContainer extends React.Component {
   constructor(props) {
@@ -26,20 +41,21 @@ class UserPageContainer extends React.Component {
   }
 
   render() {
-    if (this.state.loading) {
-      return <h1>Loading users data...</h1>
-    }
-
     return (
-      <div>
-        Users secret data: {this.state.userData}
-      </div>
+      <RootContainer>
+        <UserDataContainer>
+          {
+            this.state.loading
+            ? <h2>Loading...</h2>
+            : <React.Fragment>
+              <h2>Welcome {this.state.userData.username}!</h2>
+              <p>Your secret data is: {this.state.userData.data}</p>
+            </React.Fragment>
+          }
+        </UserDataContainer>
+      </RootContainer>
     );
   }
 }
-
-UserPageContainer.propTypes = {
-  //exampleProp: PropTypes.string,
-};
 
 export default UserPageContainer;
