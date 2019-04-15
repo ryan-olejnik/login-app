@@ -74,6 +74,7 @@ class LoginForm extends React.Component {
     this.setState({ loading: true })
     auth.login(this.props.username, this.props.password)
     .then(res => {
+      this.setState({ loading: false });
       this.props.history.push('/users');
     })
     .catch(err => {
@@ -133,7 +134,7 @@ class LoginForm extends React.Component {
         </InputContainer>
         {this.renderErrorMessage()}
         <Button
-          text='Login'
+          text={this.state.loading ? 'loading...' : 'Login'}
           type='submit'
           disabled={!this.props.username || !this.props.password}
         />
