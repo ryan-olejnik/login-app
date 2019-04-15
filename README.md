@@ -9,11 +9,11 @@ Simple react/express token-based login app
 5. Start up both the front-end server and api server by running the command `npm start` in both the /front-end folder and /api folder
 
 ## Pre-seeded users
-| username        | password  |   |   |   |
-|-----------------|-----------|---|---|---|
-| john_snow       | password  |   |   |   |
-| cersi_lannister | password  |   |   |   |
-| theon_greyjoy   | password  |   |   |   |
+| username        | password  |
+|-----------------|-----------|
+| john_snow       | password  |
+| cersi_lannister | password  |
+| theon_greyjoy   | password  |
 
 ## Notes
 - Passwords should be stored as hashes (currently stored in plain text)
