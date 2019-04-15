@@ -23,9 +23,10 @@ if (environment !== 'prod') {
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', process.env.CLIENT_ORIGIN);
-  res.header('Access-Control-Allow-Methods', 'GET, POST');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
   res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET, POST');
+  res.header('Access-Control-Allow-Headers', 'Authorization, Content-Type');
+  console.log('auth header =', req.headers.authorization);
   next();
 })
 
@@ -44,6 +45,11 @@ app.use('/api/login', (req, res, next) => {
     res.send(err);
   });
 });
+
+app.get('/api/users', (req, res) => {
+  // console.log('req = ', req);
+  res.send('users private data!!');
+})
 
 
 app.listen(`${stage.port}`, () => {
