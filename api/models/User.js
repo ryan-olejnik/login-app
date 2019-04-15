@@ -11,6 +11,10 @@ const userSchema = new mongoose.Schema({
     type: 'String',
     required: true, 
     trim: true
+  },
+  data: { // dumy data field
+    type: 'String',
+    required: true
   }
 });
 

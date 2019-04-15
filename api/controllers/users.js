@@ -4,7 +4,7 @@ const mongoConnUrl = process.env.MONGO_CONN_URL;
 const { generateToken, verifyToken } = require('../utils/auth');
 
 module.exports = {
-  create: (username, password) => {
+  create: (username, password, data) => {
     return new Promise((resolve, reject) => {
       mongoose.connect(mongoConnUrl, (err) => {
         if (err) {
@@ -16,7 +16,7 @@ module.exports = {
           });
         }
 
-        const user = new User({ username, password});
+        const user = new User({ username, password, data });
         user.save((err, user) => {
           if (!err && user) {
             resolve({
@@ -78,12 +78,22 @@ module.exports = {
       const decodedToken = verifyToken(token);
       if (decodedToken) {
         // fetch user data
+        User.findOne({ username: decodedToken.username }, (err, user) => {
+          if (!err && user) {
+            resolve({
+              status: 200,
+              description: 'Success',
+              userData: user.data
+            })
+          } else {
+            resolve({
+              status: 401,
+              description: 'User not found',
+              userData: null
+            });
+          }
+        });
 
-        resolve({
-          status: 200,
-          description: 'Success',
-          userData: 'this is the user data!'
-        })
       } else {
         resolve({
           status: 401,
