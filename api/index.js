@@ -25,11 +25,13 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', process.env.CLIENT_ORIGIN);
   res.header('Access-Control-Allow-Methods', 'GET, POST');
   res.header('Access-Control-Allow-Headers', 'Content-Type');
+  res.header('Access-Control-Allow-Credentials', 'true');
   next();
 })
 
 app.use('/api/login', (req, res, next) => {
   const { username, password} = req.body;
+  console.log('trying to login username, password =', username, password);
 
   userController.login(username, password)
   .then(response => {

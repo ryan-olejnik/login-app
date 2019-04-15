@@ -23,7 +23,7 @@ class AuthService {
         } else {
           const result = {
             success: false,
-            description: 'Somthing else went wrong...'
+            description: 'Error logging in'
           };
           reject(result); 
         }
@@ -39,7 +39,7 @@ class AuthService {
     })
   }
 
-  isLoggedIn() {
+  loggedIn() {
     const token = localStorage.getItem('access_token');
 
     // Only check if token exists.
