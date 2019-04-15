@@ -3,9 +3,10 @@ import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components'
 import Button from './Button';
 import { withRouter } from 'react-router-dom';
-import axios from 'axios';
-import AuthService from '../utils/AuthService';
 import { auth } from '../utils/init';
+import { compose } from 'redux';
+import { setUsername, setPassword } from '../actions/usersActionCreators';
+import { connect } from 'react-redux';
 
 
 const RootContainer = styled.div`
@@ -53,9 +54,6 @@ class LoginForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      // TODO: move to redux:
-      username: '',
-      password: '',
       errorMessage: null,
       loading: false
     };
@@ -65,7 +63,7 @@ class LoginForm extends React.Component {
 
   handleLogin() {
     this.setState({ loading: true })
-    auth.login(this.state.username, this.state.password)
+    auth.login(this.props.username, this.props.password)
     .then(res => {
       this.props.history.push('/users');
     })
@@ -78,10 +76,13 @@ class LoginForm extends React.Component {
   }
 
   handleInputChange(event) {
-    this.setState({
-      ...this.state,
-      [event.target.name]: event.target.value
-    });
+    event.preventDefault();
+    if (event.target.name === 'username') {
+      this.props.setUsername(event.target.value);
+    }
+    if (event.target.name === 'password') {
+      this.props.setPassword(event.target.value);
+    }
   }
 
   renderErrorMessage() {
@@ -108,7 +109,7 @@ class LoginForm extends React.Component {
             error={!!this.state.errorMessage}
             onChange={this.handleInputChange}
             placeholder='username'
-            value={this.state.username}
+            value={this.props.username}
           />
           <Input
             name='password'
@@ -116,7 +117,7 @@ class LoginForm extends React.Component {
             type='password'
             onChange={this.handleInputChange}
             placeholder='password'
-            value={this.state.password}
+            value={this.props.password}
           />
         </InputContainer>
         {this.renderErrorMessage()}
@@ -129,8 +130,29 @@ class LoginForm extends React.Component {
   }
 }
 
+const mapStateToProps = state => {
+  return {
+    username: state.users.username,
+    password: state.users.password
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    setUsername: username => dispatch(setUsername(username)),
+    setPassword: password => dispatch(setPassword(password))
+  };
+};
+
 LoginForm.propTypes = {
   history: PropTypes.object
 };
 
-export default withRouter(LoginForm);
+const enhance = compose(
+  connect(mapStateToProps, mapDispatchToProps),
+  withRouter
+)
+
+export default enhance(LoginForm);
+
+
