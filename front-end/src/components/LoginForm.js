@@ -9,7 +9,7 @@ import { setUsername, setPassword } from '../actions/usersActionCreators';
 import { connect } from 'react-redux';
 
 
-const RootContainer = styled.div`
+const Form = styled.form`
   position: absolute;
   top: 40%;
   left: 50%;
@@ -48,6 +48,10 @@ const Input = styled.input`
   :not(:last-child) {
     margin-right: 8px;
   }
+
+  ::placeholder {
+    color: #808080;
+  }
 `
 
 class LoginForm extends React.Component {
@@ -61,7 +65,12 @@ class LoginForm extends React.Component {
     this.handleInputChange = this.handleInputChange.bind(this);
   }
 
-  handleLogin() {
+  handleLogin(event) {
+    event.preventDefault();
+    if (!this.props.username || !this.props.password) {
+      return;
+    }
+
     this.setState({ loading: true })
     auth.login(this.props.username, this.props.password)
     .then(res => {
@@ -101,14 +110,15 @@ class LoginForm extends React.Component {
 
   render() {
     return (
-      <RootContainer>
-        <Header>Login</Header>
+      <Form onSubmit={this.handleLogin}>
+        <Header>Log In</Header>
         <InputContainer>
           <Input
             name='username'
             error={!!this.state.errorMessage}
             onChange={this.handleInputChange}
             placeholder='username'
+            required
             value={this.props.username}
           />
           <Input
@@ -117,15 +127,17 @@ class LoginForm extends React.Component {
             type='password'
             onChange={this.handleInputChange}
             placeholder='password'
+            required
             value={this.props.password}
           />
         </InputContainer>
         {this.renderErrorMessage()}
         <Button
-          onClick={this.handleLogin}
           text='Login'
+          type='submit'
+          disabled={!this.props.username || !this.props.password}
         />
-      </RootContainer>
+      </Form>
     );
   }
 }
